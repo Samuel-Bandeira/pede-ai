@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PedeAí - User Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221910",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display flex justify-center min-h-screen">
+<div class="w-full max-w-[400px] bg-white dark:bg-[#2d2216] min-h-screen flex flex-col relative shadow-xl overflow-x-hidden">
+<!-- Header / Settings -->
+<div class="flex items-center justify-between p-4 pb-2">
+<h2 class="text-lg font-bold flex-1 text-center pl-12 text-slate-900 dark:text-slate-100">Profile</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-full h-12 w-12 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#3d2e1d] transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+<!-- Profile Info -->
+<div class="flex flex-col items-center gap-4 p-6 pt-2">
+<div class="bg-center bg-no-repeat bg-cover rounded-full h-32 w-32 shadow-md border-4 border-white dark:border-[#2d2216]" data-alt="Profile picture of a young woman smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCqOttvgIaMNupZVZKX3TY3nYHf7xxeDgj22UFkypnV4Uulu85CTe0cnFyh7mOXbk8_aN6FrtXjOYu7O9kGgbHeZBbOG3DcKy8v7g-PdcGZpHo1W0s3VWczmd3xm8MVJ0xc1TpcVl5mscjvJa2q9ih5VpR0pnT2CcWIedjSVVYIy_KH0qgtGTkIk50-hDTkt1fmfYu4F914d237zuB-qFTcsT9JyvcvcPhV3249HX2Jt-s8bhtjzIHrDHEqraie4UJ7RxkEt0Shoxs');">
+</div>
+<div class="flex flex-col items-center">
+<p class="text-[22px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Maria Silva</p>
+<p class="text-slate-500 dark:text-slate-400 text-base">maria.silva@example.com</p>
+</div>
+</div>
+<!-- Menu Options -->
+<div class="flex-1 flex flex-col px-4 gap-2 mb-20">
+<!-- Order History -->
+<button class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-[#3d2e1d] transition-colors w-full text-left group">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<p class="text-base font-medium flex-1 text-slate-800 dark:text-slate-200">Order History</p>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500">chevron_right</span>
+</button>
+<!-- Saved Addresses -->
+<button class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-[#3d2e1d] transition-colors w-full text-left group">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<p class="text-base font-medium flex-1 text-slate-800 dark:text-slate-200">Saved Addresses</p>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500">chevron_right</span>
+</button>
+<!-- Payment Methods -->
+<button class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-[#3d2e1d] transition-colors w-full text-left group">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">credit_card</span>
+</div>
+<p class="text-base font-medium flex-1 text-slate-800 dark:text-slate-200">Payment Methods</p>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500">chevron_right</span>
+</button>
+<!-- Help Center -->
+<button class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-[#3d2e1d] transition-colors w-full text-left group">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</div>
+<p class="text-base font-medium flex-1 text-slate-800 dark:text-slate-200">Help Center</p>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500">chevron_right</span>
+</button>
+<div class="h-px bg-slate-100 dark:bg-[#3d2e1d] my-2 mx-2"></div>
+<!-- Log Out -->
+<button class="flex items-center gap-4 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left group mt-auto">
+<div class="flex items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-500/10 dark:text-red-400 shrink-0 size-12">
+<span class="material-symbols-outlined">logout</span>
+</div>
+<p class="text-base font-medium flex-1 text-red-500 dark:text-red-400">Log out</p>
+</button>
+</div>
+<!-- Bottom Navigation -->
+<div class="absolute bottom-0 w-full flex border-t border-slate-100 dark:border-[#3d2e1d] bg-white dark:bg-[#2d2216] px-4 pb-6 pt-3 z-10">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<p class="text-xs font-medium">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">search</span>
+<p class="text-xs font-medium">Search</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">receipt</span>
+<p class="text-xs font-medium">Orders</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary dark:text-primary" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">person</span>
+<p class="text-xs font-bold">Profile</p>
+</a>
+</div>
+</div>
+</body></html>
