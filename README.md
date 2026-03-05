@@ -43,12 +43,12 @@ docker-compose up -d
 
 Serviços disponíveis após o `up`:
 
-| Serviço     | URL / Porta                      |
-| ----------- | -------------------------------- |
-| PostgreSQL  | `localhost:5432`                 |
-| Redis       | `localhost:6379`                 |
-| RabbitMQ    | `localhost:5672`                 |
-| RabbitMQ UI | http://localhost:15672           |
+| Serviço     | URL / Porta            |
+| ----------- | ---------------------- |
+| PostgreSQL  | `localhost:5432`       |
+| Redis       | `localhost:6379`       |
+| RabbitMQ    | `localhost:5672`       |
+| RabbitMQ UI | http://localhost:15672 |
 
 ### 4. Backend (FastAPI)
 
