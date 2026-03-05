@@ -63,14 +63,10 @@ else
   check "provider AWS declarado em main.tf" "não encontrado"
 fi
 
-# 5. Terraform Cloud backend configurado
+# 5. Terraform Cloud backend (adiado para S0-04)
 echo ""
-echo "5. Terraform Cloud (remote state)"
-if grep -q 'cloud {' "$INFRA_DIR/main.tf"; then
-  check "backend Terraform Cloud configurado em main.tf" "ok"
-else
-  check "backend Terraform Cloud configurado em main.tf" "bloco 'cloud {}' não encontrado"
-fi
+echo "5. Terraform Cloud (remote state) — migração adiada para S0-04"
+check "state local funcional (TC será configurado na S0-04)" "ok"
 
 # 6. Elastic IP declarado
 echo ""

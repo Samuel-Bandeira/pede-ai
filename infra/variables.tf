@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_profile" {
+  description = "AWS CLI profile to use"
+  type        = string
+  default     = "pedeai"
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string

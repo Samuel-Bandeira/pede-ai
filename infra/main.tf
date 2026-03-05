@@ -7,16 +7,9 @@ terraform {
       version = "~> 5.0"
     }
   }
-
-  cloud {
-    organization = "pedeai"
-
-    workspaces {
-      name = "pedeai-infra"
-    }
-  }
 }
 
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
+  profile = var.aws_profile
 }

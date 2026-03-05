@@ -43,29 +43,29 @@
 
 ---
 
-### S0-02 — Infraestrutura via Terraform 🔵
+### S0-02 — Infraestrutura via Terraform 🔵 ✅
 
-**Como** desenvolvedor,  
-**quero** provisionar o servidor na AWS via Terraform,  
+**Como** desenvolvedor,
+**quero** provisionar o servidor na AWS via Terraform,
 **para que** a infraestrutura seja reproduzível e versionada.
 
 **Critérios de aceitação:**
 
-- [ ] `terraform apply` cria a instância EC2 t3.micro em `us-east-1` sem erros
-- [ ] Elastic IP atribuído à instância (IP fixo que sobrevive a reboots)
-- [ ] Security Group configurado (portas 22, 80, 443)
-- [ ] Docker + Nginx + Certbot instalados via cloud-init
-- [ ] SSH funcional: `ssh ubuntu@<elastic_ip>`
-- [ ] State armazenado remotamente no Terraform Cloud
+- [x] `terraform apply` cria a instância EC2 t3.micro em `us-east-1` sem erros
+- [x] Elastic IP atribuído à instância (IP fixo que sobrevive a reboots)
+- [x] Security Group configurado (portas 22, 80, 443)
+- [x] Docker + Nginx + Certbot instalados via cloud-init
+- [x] SSH funcional: `ssh ubuntu@<elastic_ip>`
+- [ ] State armazenado remotamente no Terraform Cloud _(adiado para S0-04)_
 
 **Tasks técnicas:**
 
-- [ ] Criar conta AWS e gerar Access Key + Secret Key com permissões EC2
-- [ ] Criar conta Terraform Cloud e configurar workspace `pedeai-infra`
-- [ ] Preencher `infra/terraform.tfvars` com credenciais
-- [ ] Rodar `terraform init && terraform apply`
-- [ ] Validar output: IP, comando SSH e próximos passos
-- [ ] Testar acesso SSH e confirmar Docker instalado (`docker --version`)
+- [x] Criar conta AWS e gerar Access Key + Secret Key com permissões EC2
+- [x] Criar conta Terraform Cloud e configurar workspace `pedeai-infra`
+- [x] Preencher `infra/terraform.tfvars` com credenciais
+- [x] Rodar `terraform init && terraform apply`
+- [x] Validar output: IP, comando SSH e próximos passos
+- [x] Testar acesso SSH e confirmar Docker instalado (`docker --version`)
 
 ---
 
@@ -108,6 +108,7 @@
 - [ ] Criar `.github/workflows/staging.yml`
 - [ ] Criar `.github/workflows/production.yml`
 - [ ] Configurar secrets no repositório GitHub
+- [ ] Migrar state do Terraform para Terraform Cloud (adicionar bloco `cloud {}` em `main.tf` e remover `profile` do provider)
 - [ ] Fazer push de teste para validar o pipeline
 
 ---
@@ -806,7 +807,7 @@
 
 | Sprint                | Histórias                         | Status |
 | --------------------- | --------------------------------- | ------ |
-| 0 — Fundação          | S0-01, S0-02, S0-03, S0-04        | 🔴     |
+| 0 — Fundação          | S0-01 ✅, S0-02 ✅, S0-03, S0-04  | 🟡     |
 | 1 — Autenticação      | S1-01, S1-02, S1-03, S1-04, S1-05 | 🔴     |
 | 2 — Lojas (Admin)     | S2-01, S2-02, S2-03, S2-04        | 🔴     |
 | 3 — Cardápio          | S3-01, S3-02, S3-03, S3-04        | 🔴     |
