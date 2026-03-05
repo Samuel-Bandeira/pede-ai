@@ -21,7 +21,7 @@
 
 ---
 
-### S0-01 — Repositório e estrutura base 🔵
+### S0-01 — Repositório e estrutura base ✅
 
 **Como** desenvolvedor,  
 **quero** um repositório configurado com a estrutura correta,  
@@ -29,17 +29,17 @@
 
 **Critérios de aceitação:**
 
-- [ ] Repositório criado com branches `main` e `staging`
-- [ ] `.gitignore` configurado (node_modules, .env, **pycache**, .terraform)
-- [ ] `README.md` com instruções de setup local
-- [ ] Estrutura de pastas criada: `frontend/`, `backend/`, `infra/`, `docs/`
-- [ ] `CLAUDE.md` e `docs/PRD.md` commitados
+- [x] Repositório criado com branches `main` e `staging`
+- [x] `.gitignore` configurado (node_modules, .env, **pycache**, .terraform)
+- [x] `README.md` com instruções de setup local
+- [x] Estrutura de pastas criada: `frontend/`, `backend/`, `infra/`, `docs/`
+- [x] `CLAUDE.md` e `docs/PRD.md` commitados
 
 **Tasks técnicas:**
 
-- [ ] `git init` + criar repo no GitHub
-- [ ] Configurar branch protection em `main` (requer PR)
-- [ ] Criar `docs/` com `PRD.md` e `STORIES.md`
+- [x] `git init` + criar repo no GitHub (local)
+- [ ] Configurar branch protection em `main` (requer PR no GitHub remoto)
+- [x] Criar `docs/` com `PRD.md` e `STORIES.md`
 
 ---
 
@@ -804,7 +804,7 @@
 
 | Sprint                | Histórias                         | Status |
 | --------------------- | --------------------------------- | ------ |
-| 0 — Fundação          | S0-01, S0-02, S0-03, S0-04        | 🔴     |
+| 0 — Fundação          | S0-01 ✅, S0-02, S0-03, S0-04     | 🟡     |
 | 1 — Autenticação      | S1-01, S1-02, S1-03, S1-04, S1-05 | 🔴     |
 | 2 — Lojas (Admin)     | S2-01, S2-02, S2-03, S2-04        | 🔴     |
 | 3 — Cardápio          | S3-01, S3-02, S3-03, S3-04        | 🔴     |
