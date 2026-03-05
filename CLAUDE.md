@@ -15,6 +15,8 @@ se cadastram e ganham uma página pública em `pedeai.com.br/[slug]`.
 - **Autenticação:** JWT (python-jose) + NextAuth.js
 - **Tempo real:** WebSocket nativo do FastAPI
 - **Infra local:** Docker Compose
+- **Infra produção:** AWS EC2 t3.micro (us-east-1) + Docker Compose + Nginx + Certbot
+- **IaC:** Terraform (provider AWS) — nunca criar recursos manualmente no console
 
 ---
 
@@ -249,12 +251,13 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ### Hospedagem
 
-**Hetzner VPS (CX22) + Coolify** — produção desde o dia 1.
+**AWS EC2 (t3.micro) + Docker Compose** — produção desde o dia 1.
 
-- Servidor: Hetzner Cloud CX22 (~€4/mês), Ubuntu 24 LTS
-- Painel de deploy: Coolify (self-hosted, gratuito)
-- SSL: automático via Coolify + Let's Encrypt
-- Domínio: pedeai.com.br → aponta pro IP do VPS
+- Servidor: EC2 t3.micro (~$8/mês), Ubuntu 24 LTS, região `us-east-1`
+- PostgreSQL, Redis e RabbitMQ rodam no mesmo EC2 via Docker Compose
+- SSL: Certbot + Let's Encrypt (renovação automática via cron)
+- Domínio: pedeai.com.br → aponta para o Elastic IP do EC2
+- Elastic IP: IP fixo que sobrevive a reboots da instância
 
 ### Ambientes
 
@@ -266,17 +269,20 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 Banco de dados separado por ambiente (`pedeai_prod` e `pedeai_staging`).
 RabbitMQ e Redis compartilhados com virtual hosts / prefixos separados.
 
-### Serviços no Coolify
+### Serviços no EC2
 
 ```
-coolify
-├── next-prod          → frontend produção  (porta 3000)
-├── next-staging       → frontend staging   (porta 3001)
-├── fastapi-prod       → backend produção   (porta 8000)
-├── fastapi-staging    → backend staging    (porta 8001)
-├── postgresql         → banco de dados     (porta 5432)
-├── redis              → cache              (porta 6379)
-└── rabbitmq           → mensageria         (porta 5672)
+EC2 t3.micro (us-east-1)
+└── Docker Compose
+    ├── next-prod          → frontend produção  (porta 3000)
+    ├── next-staging       → frontend staging   (porta 3001)
+    ├── fastapi-prod       → backend produção   (porta 8000)
+    ├── fastapi-staging    → backend staging    (porta 8001)
+    ├── postgresql         → banco de dados     (porta 5432)
+    ├── redis              → cache              (porta 6379)
+    └── rabbitmq           → mensageria         (porta 5672)
+
+Nginx como reverse proxy na frente de tudo (portas 80/443)
 ```
 
 ### CI/CD — GitHub Actions
@@ -287,7 +293,8 @@ coolify
 1. Lint (ruff + eslint)
 2. Testes (pytest + jest)
 3. Build Docker
-4. Deploy no Coolify (staging)
+4. SSH no EC2 → docker compose pull + up (staging)
+5. Smoke test pós-deploy
 ```
 
 **Branch `main`** (somente via PR aprovado de staging):
@@ -295,25 +302,27 @@ coolify
 ```
 1. Lint + Testes
 2. Build Docker
-3. Deploy no Coolify (produção)
+3. SSH no EC2 → docker compose pull + up (produção)
 4. Smoke test pós-deploy
+5. Rollback automático se smoke test falhar
 ```
 
 Nunca fazer push direto na `main`. Todo código vai para `staging` primeiro.
 
 ### Infra as Code (Terraform)
 
-Toda infraestrutura é gerenciada via Terraform. **Nunca criar recursos manualmente** no painel da Hetzner ou Coolify — sempre via código.
+Toda infraestrutura é gerenciada via Terraform. **Nunca criar recursos manualmente** no console da AWS — sempre via código.
 
 ```
 infra/
-├── main.tf           # provider e configurações gerais
+├── main.tf           # provider AWS e configurações gerais
 ├── variables.tf      # variáveis
-├── outputs.tf        # outputs (IPs, URLs)
-├── server.tf         # VPS Hetzner
-├── dns.tf            # registros DNS
-├── firewall.tf       # regras de firewall
-└── terraform.tfvars  # valores (não commitar — no .gitignore)
+├── outputs.tf        # outputs (IP, DNS, SSH command)
+├── ec2.tf            # instância EC2 + Elastic IP + user_data
+├── vpc.tf            # VPC, subnet, internet gateway
+├── security.tf       # Security Groups (firewall)
+├── dns.tf            # Route 53 (opcional) ou instruções p/ Registro.br
+└── terraform.tfvars  # valores sensíveis (não commitar — no .gitignore)
 ```
 
 Comandos:
@@ -359,6 +368,88 @@ Claude é o **pair programmer** — não um assistente passivo. Isso significa:
 - Recusar implementar código sem teste correspondente
 - Apontar violações das convenções deste arquivo imediatamente
 - Ser direto: se uma abordagem for ruim, dizer o porquê e propor alternativa
+
+### TDD no Frontend
+
+O frontend tem 3 camadas de teste com ferramentas e ciclos distintos:
+
+**1. Lógica pura — Jest (TDD clássico)**
+
+Hooks, utils, formatadores, validadores. Ciclo idêntico ao backend.
+
+```
+test → implementa → refatora → commit
+```
+
+```ts
+// PRIMEIRO o teste
+it("ao adicionar item já existente, incrementa quantidade", () => {
+  const { result } = renderHook(() => useCarrinho());
+  act(() => result.current.adicionar(mockItem));
+  act(() => result.current.adicionar(mockItem));
+  expect(result.current.itens[0].qty).toBe(2);
+});
+// DEPOIS implementa useCarrinho
+```
+
+**2. Componentes — React Testing Library (comportamento)**
+
+Testa o que o usuário vê e faz, não a estrutura interna do componente.
+Nunca testar classes CSS, estrutura HTML ou detalhes de implementação.
+
+```
+teste de comportamento → componente mínimo → refatora
+```
+
+```ts
+// PRIMEIRO o teste
+it('exibe total quando há itens no carrinho', () => {
+  render(<Carrinho itens={mockItens} />)
+  expect(screen.getByText('R$ 49,90')).toBeInTheDocument()
+})
+// DEPOIS implementa <Carrinho />
+```
+
+**3. Fluxos completos — Playwright (E2E)**
+
+Páginas inteiras e fluxos críticos. Escrito antes da página existir.
+Roda contra o ambiente de staging — nunca mocka o backend.
+
+```
+teste E2E → implementa a página → passa no E2E → commit
+```
+
+```ts
+// PRIMEIRO o teste
+test("cliente acessa cardápio e adiciona item ao carrinho", async ({
+  page,
+}) => {
+  await page.goto("/sushi-da-hora");
+  await page
+    .getByText("Combo 20 peças")
+    .getByRole("button", { name: "Adicionar" })
+    .click();
+  await expect(page.getByTestId("carrinho-total")).toContainText("R$ 49,90");
+});
+// DEPOIS implementa a página /[slug]
+```
+
+**O que NUNCA testar:**
+
+- Estilos Tailwind ou CSS — não existe teste de pixel
+- Animações e transições — testa comportamento, não visual
+- Snapshot tests — frágeis, não documentam intenção
+- Detalhes internos de implementação de componentes
+
+**Onde cada teste vive:**
+
+```
+frontend/
+├── __tests__/
+│   ├── hooks/          # Jest — lógica de hooks
+│   └── components/     # RTL — comportamento de componentes
+└── e2e/                # Playwright — fluxos completos
+```
 
 ### TDD — Fluxo obrigatório
 
@@ -411,10 +502,20 @@ Uma história só está pronta quando:
 
 ### Fluxo de branches
 
-**Regra absoluta:** cada história tem seu próprio branch, criado sempre a partir de `staging`.
+**Regra absoluta:** antes de iniciar qualquer história, o agente deve verificar
+se a história anterior foi mergeada em `staging`. Se não foi, deve parar e avisar.
+
+```
+⚠️ Antes de começar a S1-02:
+1. A S1-01 foi mergeada em staging?
+   → NÃO: avisar o humano e aguardar antes de continuar
+   → SIM: prosseguir
+```
+
+**Iniciar uma história:**
 
 ```bash
-# Início de QUALQUER história — sem exceção
+# SEMPRE a partir de staging atualizado — sem exceção
 git checkout staging
 git pull origin staging
 git checkout -b S{numero}-{slug-da-historia}
@@ -424,21 +525,36 @@ git checkout -b S{numero}-{slug-da-historia}
 # git checkout -b S2-03-aprovar-loja
 ```
 
-**Commit a cada ação significativa** — não acumular trabalho:
+**Commit + push a cada ação do ciclo TDD:**
 
 ```bash
-# Após cada arquivo criado, teste escrito, implementação feita
-git add .
-git commit -m "tipo(escopo): descrição"
-git push origin S{numero}-{slug}
+# 1. Após escrever o teste (RED)
+git add . && git commit -m "test(escopo): descreve o teste" && git push origin S{numero}-{slug}
+
+# 2. Após implementação passar (GREEN)
+git add . && git commit -m "feat(escopo): implementação mínima" && git push origin S{numero}-{slug}
+
+# 3. Após refatorar (REFACTOR)
+git add . && git commit -m "refactor(escopo): melhoria" && git push origin S{numero}-{slug}
+
+# 4. Ao final da história
+git add . && git commit -m "chore(escopo): finaliza S{numero}" && git push origin S{numero}-{slug}
+```
+
+**Ao finalizar a história**, o agente deve avisar:
+
+```
+✅ S1-01 concluída e pushed.
+👉 Abra o PR: S1-01-cadastro-lojista → staging
+   Após merge, avise para começarmos a S1-02.
 ```
 
 O agente NUNCA deve:
 
-- Criar branch a partir de outro feature branch
-- Acumular múltiplas ações em um único commit
-- Fazer push apenas no final — push após cada commit
-- Fazer merge — isso é responsabilidade do humano via PR
+- Iniciar história nova sem confirmar que a anterior foi mergeada em staging
+- Criar branch a partir de outro feature branch — sempre de staging
+- Acumular múltiplas ações num único commit
+- Fazer o merge — isso é responsabilidade do humano via PR
 
 ### Mensagens de commit
 
